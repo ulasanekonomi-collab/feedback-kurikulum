@@ -51,15 +51,25 @@ def calculate_attention_score(row):
     return round((p_score * i_score) + u_score + bonus, 2)
 
 # 4. FORM INPUT DI STREAMLIT (Tampilan untuk Responden)
-with st.sidebar:
-    st.header("Form Aspirasi")
+# Gantilah bagian 'with st.sidebar:' dengan ini agar muncul di tengah halaman
+st.divider()
+st.header("Form Aspirasi")
+col1, col2 = st.columns(2)
+
+with col1:
     nama = st.text_input("Nama")
-    status = st.selectbox("Status", ["Dosen Internal", "Pimpinan Kampus", "Alumni", "Stakeholder"])
+    status = st.selectbox("Status", ["Dosen Internal", "Pimpinan Fakultas/Unisba", "Alumni", "Mahasiswa", "Stakeholder"])
     area = st.selectbox("Area Fokus", ["Area A: Fondasi", "Area B: Struktur", "Area C: Proses", "Area D: Evaluasi"])
+
+with col2:
     issue = st.text_input("Issues (Halaman/Bab)")
-    critique = st.text_area("Critique (Analisis)")
-    solution = st.text_area("Solution (Usulan Konkret)")
     urgency = st.slider("Tingkat Urgensi", 1, 5, 3)
+
+critique = st.text_area("Critique (Analisis)")
+solution = st.text_area("Solution (Usulan Konkret)")
+
+if st.button("Kirim Usulan", use_container_width=True): # Pakai ini agar tombolnya lebar
+    st.success("Usulan berhasil dikirim!")
     
     if st.button("Kirim Usulan"):
         # Logika simpan data (sementara masuk ke list)
