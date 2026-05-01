@@ -6,7 +6,7 @@ st.set_page_config(page_title="Koreksi Kurikulum EP", layout="wide")
 st.title("Penyempurnaan Draft 7 Kurikulum EP Unisba")
 st.markdown("""
 ### Prolog: Transformasi Kurikulum Berbasis Standar dan Masa Depan
-Penyusunan draf ini mengacu pada **Pedoman Kurikulum OBE Kemendiktisaintek 2024** dan filosofi **William Spady**. 
+Penyusunan draf ini mengacu pada **Pedoman Kurikulum OBE Kemendiktisaintek 2024** dan **peraturan terkait yang ada di dalamnya**. 
 Kami mengundang Bapak/Ibu untuk memberikan 'Attention' pada area strategis demi kemaslahatan umat.
 """)
 
