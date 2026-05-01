@@ -104,3 +104,8 @@ if st.session_state.data_usulan:
     # Opsi Download
     csv = df_sorted.to_csv(index=False).encode('utf-8')
     st.download_button("Unduh Rekap CSV", data=csv, file_name='rekap_usulan.csv', mime='text/csv')
+# Tambahkan ini di bagian pemrosesan DataFrame
+df['rekomendasi_kko'] = df.apply(lambda x: suggest_kko(x['critique'], x['solution']), axis=1)
+
+# Tampilkan di tabel
+st.table(df_sorted[['attention_score', 'rekomendasi_kko', 'nama', 'area', 'issues', 'solution']])
