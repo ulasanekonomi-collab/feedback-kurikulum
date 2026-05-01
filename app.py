@@ -2,7 +2,12 @@ import streamlit as st
 import pandas as pd
 
 # 1. JUDUL DAN PROLOG (Sesuai diskusi kita tadi)
-st.set_page_config(page_title="Koreksi Kurikulum EP", layout="wide")
+# Ubah baris ini di bagian paling atas
+st.set_page_config(
+    page_title="Koreksi Kurikulum EP", 
+    layout="wide",
+    initial_sidebar_state="expanded"  # Ini akan memaksa sidebar terbuka sejak awal
+)
 st.title("Penyempurnaan Draft 7 Kurikulum EP Unisba")
 st.markdown("""
 ### Prolog: Transformasi Kurikulum Berbasis Standar dan Masa Depan
