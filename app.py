@@ -37,7 +37,19 @@ def calculate_attention_score(row):
     u_score = row['urgency_user']
     bonus = 2 if any(word in str(row['critique']).lower() for word in ["ketidaklengkapan", "kontradiksi", "regulasi"]) else 0
     return round((p_score * i_score) + u_score + bonus, 2)
-
+def suggest_kko(critique, solution):
+    critique = str(critique).lower()
+    # Logika penentuan KKO
+    if "kurang" in critique or "tidak ada" in critique or "ketidaklengkapan" in critique:
+        return "TAMBAHKAN/LENGKAPI"
+    elif "tumpang tindih" in critique or "kontradiksi" in critique:
+        return "SELARASKAN/SINKRONKAN"
+    elif "kuno" in critique or "relevansi" in critique:
+        return "MUTAKHIRKAN"
+    elif "berat" in critique or "terlalu banyak" in critique:
+        return "SEDERHANAKAN"
+    else:
+        return "REVISI" # Default
 # 4. Tampilan Interface
 st.title("Penyempurnaan Draft 7 Kurikulum EP Unisba")
 
