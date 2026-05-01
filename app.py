@@ -82,3 +82,11 @@ df['attention_score'] = df.apply(calculate_attention_score, axis=1)
 df_sorted = df.sort_values(by='attention_score', ascending=False)
 
 st.table(df_sorted[['attention_score', 'nama', 'area', 'issues', 'solution']])
+# Tambahkan ini di bawah tabel
+csv = df_sorted.to_csv(index=False).encode('utf-8')
+st.download_button(
+    label="Unduh Rekap Usulan (CSV)",
+    data=csv,
+    file_name='rekap_usulan_draft7.csv',
+    mime='text/csv',
+)
