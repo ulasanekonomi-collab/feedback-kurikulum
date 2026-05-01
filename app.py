@@ -40,3 +40,14 @@ def calculate_attention_score(row):
     # Rumus Final Attention Score
     total_score = (p_score * i_score) + u_score + bonus
     return round(total_score, 2)
+df = pd.DataFrame(data_usulan)
+
+# Terapkan scoring
+df['attention_score'] = df.apply(calculate_attention_score, axis=1)
+
+# Urutkan berdasarkan score tertinggi
+df_sorted = df.sort_values(by='attention_score', ascending=False)
+
+# Tampilkan hasil untuk Dashboard
+print("DAFTAR USULAN BERDASARKAN BOBOT PERHATIAN (ATTENTION):")
+print(df_sorted[['nama', 'area', 'attention_score', 'issues']])
