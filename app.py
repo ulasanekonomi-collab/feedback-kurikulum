@@ -66,7 +66,7 @@ with col2:
     urgency = st.slider("Tingkat Urgensi", 1, 5, 3)
 
 critique = st.text_area("Critique (Analisis)")
-solution = st.text_area("Solution (Usulan Konkret)")
+solution = st.text_area("Solution (Usulan)")
 
 if st.button("Kirim Usulan", use_container_width=True): # Pakai ini agar tombolnya lebar
     st.success("Usulan berhasil dikirim!")
