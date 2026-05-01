@@ -1,43 +1,32 @@
 import streamlit as st
 import pandas as pd
 
-# 1. JUDUL DAN PROLOG (Sesuai diskusi kita tadi)
-# Ubah baris ini di bagian paling atas
-st.set_page_config(
-    page_title="Koreksi Kurikulum EP", 
-    layout="wide",
-    initial_sidebar_state="expanded"  # Ini akan memaksa sidebar terbuka sejak awal
-)
-st.title("Penyempurnaan Draft 7 Kurikulum EP Unisba")
-st.markdown("""
-### Prolog: Transformasi Kurikulum Berbasis Standar dan Masa Depan
-Penyusunan draf ini mengacu pada **Pedoman Kurikulum OBE Kemendiktisaintek 2024** dan **peraturan terkait yang ada di dalamnya**. 
-Kami mengundang Bapak/Ibu untuk memberikan 'Attention' pada area strategis demi kemaslahatan umat.
-""")
+# 1. Konfigurasi Halaman
+st.set_page_config(page_title="Koreksi Kurikulum EP", layout="wide", initial_sidebar_state="expanded")
 
-# 2. DATA SIMULASI (Supaya tidak error 'data_usulan is not defined')
-# Nantinya data ini bisa diambil dari database atau CSV
-data_usulan = [
-    {
-        "nama": "Contoh User",
-        "perspektif": "Pengembang Sistem",
-        "area": "Area B: Struktur & Kompetensi",
-        "issues": "Prasyarat mata kuliah",
-        "critique": "Aya ketidaklengkapan dalam logika dasar.",
-        "solution": "Tambahkan matkul prasyarat Python.",
-        "urgency_user": 5
-    }
-]
+# 2. Inisialisasi Session State (Wadah Penyimpanan Data)
+if 'data_usulan' not in st.session_state:
+    # Data awal/pancingan agar tabel tidak kosong
+    st.session_state.data_usulan = [
+        {
+            "nama": "Sistem",
+            "status": "Admin",
+            "perspektif": "Pengembang Sistem",
+            "area": "Area B: Struktur",
+            "issues": "Contoh: Bab V",
+            "critique": "Contoh kritik...",
+            "solution": "Contoh solusi...",
+            "urgency_user": 3
+        }
+    ]
 
-# 3. FUNGSI LOGIKA (Attention Mechanism)
+# 3. Fungsi Logika (Mapping & Scoring)
 def map_status_to_perspective(status):
     mapping = {
         "Dosen Internal": "Akademisi & Praktisi",
-        "Dosen Luar/Pakar": "Akademisi & Praktisi",
         "Pimpinan Kampus": "Pengembang Sistem",
         "Alumni": "Pengguna & Stakeholder",
-        "Stakeholder/Pengguna Lulusan": "Pengguna & Stakeholder",
-        "Mahasiswa Aktif": "Pengguna & Stakeholder"
+        "Stakeholder": "Pengguna & Stakeholder"
     }
     return mapping.get(status, "Pengguna & Stakeholder")
 
@@ -46,47 +35,60 @@ def calculate_attention_score(row):
     p_score = perspektif_weights.get(row['perspektif'], 1)
     i_score = len(str(row['solution'])) / 100
     u_score = row['urgency_user']
-    
-    bonus = 2 if any(word in row['critique'].lower() for word in ["ketidaklengkapan", "kontradiksi", "regulasi"]) else 0
+    bonus = 2 if any(word in str(row['critique']).lower() for word in ["ketidaklengkapan", "kontradiksi", "regulasi"]) else 0
     return round((p_score * i_score) + u_score + bonus, 2)
 
-# 4. FORM INPUT DI STREAMLIT (Tampilan untuk Responden)
-# Gantilah bagian 'with st.sidebar:' dengan ini agar muncul di tengah halaman
-st.divider()
+# 4. Tampilan Interface
+st.title("Penyempurnaan Draft 7 Kurikulum EP Unisba")
+
 st.header("Form Aspirasi")
 col1, col2 = st.columns(2)
 
 with col1:
-    nama = st.text_input("Nama")
-    status = st.selectbox("Status", ["Dosen Internal", "Pimpinan Fakultas/Unisba", "Alumni", "Mahasiswa", "Stakeholder"])
-    area = st.selectbox("Area Fokus", ["Area A: Fondasi", "Area B: Struktur", "Area C: Proses", "Area D: Evaluasi"])
+    nama_input = st.text_input("Nama")
+    status_input = st.selectbox("Status", ["Dosen Internal", "Pimpinan Kampus", "Alumni", "Stakeholder"])
+    area_input = st.selectbox("Area Fokus", ["Area A: Fondasi", "Area B: Struktur", "Area C: Proses", "Area D: Evaluasi"])
 
 with col2:
-    issue = st.text_input("Issues (Halaman/Bab)")
-    urgency = st.slider("Tingkat Urgensi", 1, 5, 3)
+    issue_input = st.text_input("Issues (Halaman/Bab)")
+    urgency_input = st.slider("Tingkat Urgensi", 1, 5, 3)
 
-critique = st.text_area("Critique (Analisis)")
-solution = st.text_area("Solution (Usulan)")
+critique_input = st.text_area("Critique (Analisis)")
+solution_input = st.text_area("Solution (Usulan Konkret)")
 
-if st.button("Kirim Usulan", use_container_width=True): # Pakai ini agar tombolnya lebar
-    st.success("Usulan berhasil dikirim!")
-    
-    if st.button("Kirim Usulan"):
-        # Logika simpan data (sementara masuk ke list)
-        st.success("Usulan berhasil dikirim!")
+# TOMBOL KIRIM (Proses Koneksi Data)
+if st.button("Kirim Usulan", use_container_width=True):
+    if nama_input and solution_input: # Validasi sederhana
+        # Buat dictionary data baru
+        new_data = {
+            "nama": nama_input,
+            "status": status_input,
+            "perspektif": map_status_to_perspective(status_input),
+            "area": area_input,
+            "issues": issue_input,
+            "critique": critique_input,
+            "solution": solution_input,
+            "urgency_user": urgency_input
+        }
+        # Masukkan ke dalam session_state
+        st.session_state.data_usulan.append(new_data)
+        st.success(f"Terima kasih {nama_input}, usulan Anda telah terkoneksi ke sistem!")
+    else:
+        st.error("Mohon isi Nama dan Solution terlebih dahulu.")
 
-# 5. DISPLAY DASHBOARD (Logika Deduktif - Ide Pokok di Atas)
+st.divider()
+
+# 5. Dashboard (Menampilkan Data dari Session State)
 st.subheader("Daftar Usulan Berdasarkan Bobot Perhatian (Attention)")
-df = pd.DataFrame(data_usulan)
-df['attention_score'] = df.apply(calculate_attention_score, axis=1)
-df_sorted = df.sort_values(by='attention_score', ascending=False)
 
-st.table(df_sorted[['attention_score', 'nama', 'area', 'issues', 'solution']])
-# Tambahkan ini di bawah tabel
-csv = df_sorted.to_csv(index=False).encode('utf-8')
-st.download_button(
-    label="Unduh Rekap Usulan (CSV)",
-    data=csv,
-    file_name='rekap_usulan_draft7.csv',
-    mime='text/csv',
-)
+if st.session_state.data_usulan:
+    df = pd.DataFrame(st.session_state.data_usulan)
+    df['attention_score'] = df.apply(calculate_attention_score, axis=1)
+    df_sorted = df.sort_values(by='attention_score', ascending=False)
+    
+    # Menampilkan Tabel
+    st.dataframe(df_sorted[['attention_score', 'nama', 'status', 'area', 'issues', 'solution']], use_container_width=True)
+
+    # Opsi Download
+    csv = df_sorted.to_csv(index=False).encode('utf-8')
+    st.download_button("Unduh Rekap CSV", data=csv, file_name='rekap_usulan.csv', mime='text/csv')
